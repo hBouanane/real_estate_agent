@@ -1,0 +1,30 @@
+# Real Estate Agent - Moroccan Darija
+# Dependencies for LangChain, LangGraph, LangSmith, and Gemini
+
+# Core LangChain
+langchain
+langchain-core
+langchain-community
+
+# LangGraph for agent workflows
+langgraph
+langgraph-checkpoint
+
+# LangSmith for monitoring
+langsmith
+
+# Google Gemini integration
+langchain-google-genai
+google-generativeai
+langchain_groq
+
+# Web framework
+flask
+flask-cors
+
+# Additional utilities
+python-dotenv
+pydantic
+requests
+
+python-telegram-bot

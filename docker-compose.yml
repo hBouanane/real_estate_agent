@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Main application
+  real-estate-agent:
+    build: .
+    container_name: real-estate-agent
+    ports:
+      - "5000:5000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
+      - LANGCHAIN_TRACING_V2=true
+      - LANGCHAIN_PROJECT=real-estate-agent-darija
+      - DEBUG=False
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - agent-network
+
+  # Optional: Redis for caching (uncomment if needed)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: redis-cache
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis-data:/data
+  #   restart: unless-stopped
+  #   networks:
+  #     - agent-network
+
+  # Optional: PostgreSQL for property database (uncomment if needed)
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: postgres-db
+  #   environment:
+  #     - POSTGRES_DB=real_estate
+  #     - POSTGRES_USER=agent
+  #     - POSTGRES_PASSWORD=secure_password_here
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+  #   networks:
+  #     - agent-network
+
+networks:
+  agent-network:
+    driver: bridge
+
+# volumes:
+#   redis-data:
+#   postgres-data:

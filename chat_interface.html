@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 وكيل العقارات - Agent Immobilier</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 700px;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .logo p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .features {
+            margin-top: 20px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        
+        .feature-item::before {
+            content: "✓";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin-left: 10px;
+            text-align: center;
+            line-height: 20px;
+            font-weight: bold;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .chat-header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: #f5f7fa;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+        
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .message.agent .message-avatar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .message.agent .message-content {
+            background: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+        
+        .property-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            border-right: 4px solid #667eea;
+        }
+        
+        .property-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #1e3c72;
+        }
+        
+        .property-details {
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .chat-input {
+            padding: 20px 30px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .chat-input input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .chat-input button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .chat-input button:hover {
+            transform: scale(1.05);
+        }
+        
+        .chat-input button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 15px;
+        }
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        
+        .quick-action-btn {
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-action-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                height: 100vh;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        function RealEstateChat() {
+            const [messages, setMessages] = useState([
+                {
+                    type: 'agent',
+                    content: 'السلام عليكم! مرحبا بيك في وكالتنا العقارية. أنا هنا باش نعاونك تلقى الدار لي كتبغي. شنو بغيتي اليوم؟',
+                    timestamp: new Date(),
+                    metadata: { intent: 'greeting', sentiment: 'positive', stage: 'greeting' }
+                }
+            ]);
+            const [inputValue, setInputValue] = useState('');
+            const [isTyping, setIsTyping] = useState(false);
+            const [stats, setStats] = useState({
+                totalMessages: 1,
+                propertiesShown: 0,
+                conversationStage: 'greeting'
+            });
+            const messagesEndRef = useRef(null);
+
+            const scrollToBottom = () => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            };
+
+            useEffect(() => {
+                scrollToBottom();
+            }, [messages]);
+
+            const quickActions = [
+                'بغيت نشري شقة',
+                'كنقلب على دار للكراء',
+                'بغيت نبيع عقار',
+                'شحال التمن؟',
+                'فين كاينة؟'
+            ];
+
+            const sendMessage = async (text) => {
+                if (!text.trim()) return;
+
+                // Add user message
+                const userMessage = {
+                    type: 'user',
+                    content: text,
+                    timestamp: new Date()
+                };
+
+                setMessages(prev => [...prev, userMessage]);
+                setInputValue('');
+                setIsTyping(true);
+
+                // Simulate API call
+                try {
+                    // In production, replace with actual API endpoint
+                    const API_URL = 'http://localhost:5000/api/message';
+                    
+                    // Simulated response for demo
+                    setTimeout(() => {
+                        const responses = {
+                            'بغيت نشري شقة': {
+                                content: 'مزيان! واش عندك فكرة على المنطقة لي بغيتي؟ مثلا الدار البيضاء، الرباط، مراكش...؟ وشحال الميزانية ديالك؟',
+                                metadata: { intent: 'buy', sentiment: 'positive', stage: 'qualifying' }
+                            },
+                            'كنقلب على دار للكراء': {
+                                content: 'مرحبا! واش كتقلب على شقة ولا فيلا؟ وفاش بغيتيها؟ و شحال كتقدر تخلص كل شهر؟',
+                                metadata: { intent: 'rent', sentiment: 'positive', stage: 'qualifying' }
+                            },
+                            'default': {
+                                content: 'فهمت! عطيني شوية تفاصيل أكثر باش نقدر نعاونك مزيان. مثلا: فين بغيتي تكون الدار؟ شحال الميزانية؟ بغيتي شحال من الغرف؟',
+                                metadata: { intent: 'inquiry', sentiment: 'neutral', stage: 'qualifying' },
+                                properties: [
+                                    {
+                                        type: 'شقة',
+                                        location: 'الدار البيضاء - المعاريف',
+                                        price: '1,200,000 درهم',
+                                        bedrooms: 3,
+                                        area: '120 متر مربع',
+                                        description: 'شقة فاخرة مع إطلالة رائعة'
+                                    },
+                                    {
+                                        type: 'فيلا',
+                                        location: 'الرباط - السويسي',
+                                        price: '3,500,000 درهم',
+                                        bedrooms: 5,
+                                        area: '350 متر مربع',
+                                        description: 'فيلا مع حديقة وحمام سباحة'
+                                    }
+                                ]
+                            }
+                        };
+
+                        const response = responses[text] || responses['default'];
+                        
+                        const agentMessage = {
+                            type: 'agent',
+                            content: response.content,
+                            timestamp: new Date(),
+                            metadata: response.metadata,
+                            properties: response.properties
+                        };
+
+                        setMessages(prev => [...prev, agentMessage]);
+                        setIsTyping(false);
+
+                        // Update stats
+                        setStats(prev => ({
+                            totalMessages: prev.totalMessages + 2,
+                            propertiesShown: prev.propertiesShown + (response.properties?.length || 0),
+                            conversationStage: response.metadata?.stage || prev.conversationStage
+                        }));
+                    }, 1500);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    setIsTyping(false);
+                }
+            };
+
+            return (
+                <div className="container">
+                    <div className="sidebar">
+                        <div className="logo">
+                            <h1>🏠 العقارات</h1>
+                            <p>وكالتك العقارية الذكية</p>
+                        </div>
+
+                        <div className="stats">
+                            <h3 style={{marginBottom: '15px', fontSize: '16px'}}>📊 إحصائيات</h3>
+                            <div className="stat-item">
+                                <span>الرسائل:</span>
+                                <span className="stat-value">{stats.totalMessages}</span>
+                            </div>
+                            <div className="stat-item">
+                                <span>العقارات المعروضة:</span>
+                                <span className="stat-value">{stats.propertiesShown}</span>
+                            </div>
+                            <div className="stat-item">
+                                <span>المرحلة:</span>
+                                <span className="stat-value">{stats.conversationStage}</span>
+                            </div>
+                        </div>
+
+                        <div className="features">
+                            <h3 style={{marginBottom: '15px', fontSize: '16px'}}>✨ المميزات</h3>
+                            <div className="feature-item">ردود بالدارجة المغربية</div>
+                            <div className="feature-item">تحليل ذكي للرسائل</div>
+                            <div className="feature-item">اقتراحات عقارية مخصصة</div>
+                            <div className="feature-item">متابعة تلقائية</div>
+                            <div className="feature-item">تحليل المشاعر</div>
+                        </div>
+                    </div>
+
+                    <div className="chat-container">
+                        <div className="chat-header">
+                            <div>
+                                <h2>💬 الدردشة</h2>
+                                <p style={{fontSize: '13px', opacity: '0.9'}}>وكيل عقاري ذكي مدعوم بـ Gemini AI</p>
+                            </div>
+                            <div className="status">
+                                <div className="status-dot"></div>
+                                <span>متصل</span>
+                            </div>
+                        </div>
+
+                        <div className="chat-messages">
+                            {messages.map((msg, idx) => (
+                                <div key={idx} className={`message ${msg.type}`}>
+                                    <div className="message-avatar">
+                                        {msg.type === 'user' ? '👤' : '🤖'}
+                                    </div>
+                                    <div>
+                                        <div className="message-content">
+                                            {msg.content}
+                                            
+                                            {msg.properties && msg.properties.map((prop, pidx) => (
+                                                <div key={pidx} className="property-card">
+                                                    <div className="property-title">
+                                                        {prop.type} - {prop.location}
+                                                    </div>
+                                                    <div className="property-details">
+                                                        💰 {prop.price} | 🛏️ {prop.bedrooms} غرف | 📐 {prop.area}
+                                                        <br />
+                                                        {prop.description}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {msg.metadata && (
+                                            <div className="message-meta">
+                                                <span>🎯 {msg.metadata.intent}</span>
+                                                <span>😊 {msg.metadata.sentiment}</span>
+                                                <span>📍 {msg.metadata.stage}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            
+                            {isTyping && (
+                                <div className="message agent">
+                                    <div className="message-avatar">🤖</div>
+                                    <div className="message-content">
+                                        <div className="typing-indicator">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        <div style={{padding: '10px 30px', background: '#f5f7fa', borderTop: '1px solid #e0e0e0'}}>
+                            <div className="quick-actions">
+                                {quickActions.map((action, idx) => (
+                                    <button
+                                        key={idx}
+                                        className="quick-action-btn"
+                                        onClick={() => sendMessage(action)}
+                                    >
+                                        {action}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="chat-input">
+                            <input
+                                type="text"
+                                placeholder="اكتب رسالتك هنا..."
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && sendMessage(inputValue)}
+                                disabled={isTyping}
+                            />
+                            <button
+                                onClick={() => sendMessage(inputValue)}
+                                disabled={isTyping || !inputValue.trim()}
+                            >
+                                إرسال 📨
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<RealEstateChat />, document.getElementById('root'));
+    </script>
+</body>
+</html>
