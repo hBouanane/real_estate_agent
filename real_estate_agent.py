@@ -1284,22 +1284,34 @@ agent = create_react_agent(
 
 
 def chat(message: str, thread_id: str = "default") -> str:
-    """Send a message to the agent and get a response."""
     config = {"configurable": {"thread_id": thread_id}}
     result = agent.invoke(
         {"messages": [HumanMessage(content=message)]},
         config=config,
     )
-    content = result["messages"][-1].content
 
-    # Gemini sometimes returns a list of content blocks instead of a plain string
-    if isinstance(content, list):
-        return "".join(
+    messages = result["messages"]
+
+    # collect all tool results
+    tool_results = []
+    for msg in messages:
+        if hasattr(msg, "content") and msg.__class__.__name__ == "ToolMessage":
+            tool_results.append(msg.content)
+
+    final = messages[-1].content
+    if isinstance(final, list):
+        final = "".join(
             block["text"] if isinstance(block, dict) else str(block)
-            for block in content
+            for block in final
             if not isinstance(block, dict) or block.get("type") == "text")
 
-    return content
+    # if tool was used but result not in final response, inject it
+    if tool_results:
+        for result_text in tool_results:
+            if result_text and result_text[:30] not in final:
+                final = result_text + "\n\n" + final
+
+    return final
 
 
 # ==================== DEMO ====================
